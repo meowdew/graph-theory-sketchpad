@@ -6,7 +6,7 @@ import "./App.css";
 
 function App() {
   return (
-    <div className={"h-screen w-screen flex flex-col"}>
+    <div className={"h-screen w-screen flex flex-col font-sans"}>
       <ToolBar />
       <Graph />
       <MsgBar />
