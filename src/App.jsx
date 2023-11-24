@@ -1,23 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import ToolBar from "./components/toobar";
+import MsgBar from "./components/msgbar";
+import Graph from "./components/network";
+import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={"h-screen w-screen flex flex-col"}>
+      <ToolBar />
+      <Graph />
+      <MsgBar />
     </div>
   );
 }
