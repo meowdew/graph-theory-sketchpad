@@ -1,51 +1,76 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DataSet, Network } from "vis-network/standalone";
 import PubSub from "pubsub-js";
+
 const Graph = (props) => {
-  const [nodes, setNodes] = useState([{}]);
-  const [edges, setEdges] = useState([]);
-  const [graph, setGraph] = useState(null);
-  const [activateNode, setActivateNode] = useState(false);
+  const [nodes, setNodes] = useState(new DataSet([]));
+  const [edges, setEdges] = useState(new DataSet([]));
+  const networkRef = useRef(null);
 
-  let network;
-
-  const option = {
-    interaction: true,
-    manipulation: {
-      enable: true,
-      addNode: (nodes, setNodes) => {
-        const id = nodes.length + 1;
-        const label = `Node ${id}`;
-        const node = { id: id, label: label };
-        setNodes([...nodes, node]);
-      },
+  let options = {
+    interaction: {
+      hover: true,
     },
     nodes: {
       shape: "circle",
     },
+    edges: {},
+    manipulation: {
+      enabled: true,
+      addNode: (node, callback) => {
+        node = {
+          ...node,
+          id: nodes.length + 1,
+          label: `Node ${nodes.length + 1}`,
+        };
+        callback(node); //add
+        PubSub.publish("nodes-length", { len: nodes.length });
+      },
+      addEdge: (edge, callback) => {
+        callback(edge); //add
+      },
+    },
   };
 
   useEffect(() => {
-    const addNode = PubSub.subscribe("activate-add-node", () => {
-      setActivateNode(!activateNode);
-    });
+    const addNodeSubscription = PubSub.subscribe(
+      "activate-add-node",
+      (msg, data) => {
+        if (data) {
+          const newNode = {
+            id: nodes.length + 1,
+            label: `Node ${nodes.length + 1}`,
+          };
+          nodes.add(newNode);
+          PubSub.publish("nodes-length", { len: nodes.length });
+        }
+      },
+    );
+
+    const addEdgeSubscription = PubSub.subscribe(
+      "edge-add-ready",
+      (msg, data) => {
+        edges.add(data);
+      },
+    );
+
     return () => {
-      PubSub.unsubscribe(addNode);
+      PubSub.unsubscribe(addNodeSubscription);
+      PubSub.unsubscribe(addEdgeSubscription);
     };
   }, []);
 
   useEffect(() => {
-    let data = {
-      nodes: new DataSet(nodes),
-      edges: new DataSet(edges),
-    };
-
     const container = document.getElementById("network");
-    network = new Network(container, data, {});
-    network.on("click", (params) => {
-      console.log("click event");
-    });
-  }, [nodes, edges, graph]);
+    console.log(`nodes`, nodes);
+    console.log(`edges`, edges);
+    networkRef.current = new Network(
+      container,
+      { nodes, edges },
+      { ...options },
+    );
+    networkRef.current.on("click", (params) => {});
+  }, []);
 
   return (
     <div

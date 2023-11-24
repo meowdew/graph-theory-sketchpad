@@ -1,7 +1,20 @@
-.toolbar {
+.toolbar-btn {
+    display: flex;
+    background-color: ghostwhite;
+    border-radius: 0.125rem;
+    padding: 2px 2px;
+    text-align: center;
+    font-weight: 600;
+    transition: all 0.5s ease;
+    color: #3362FF;
+    border: 1px solid black;
 
 }
 
-.toolbar::after{
-
+.toolbar-btn:hover {
+    background-color: aqua;
+    border-radius: 0.5rem;
+    border: 1px solid rebeccapurple;
+    box-shadow: 2px -2px 2px wheat;
 }
+
