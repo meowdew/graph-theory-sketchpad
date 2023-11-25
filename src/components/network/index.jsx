@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DataSet, Network } from "vis-network/standalone";
 import PubSub from "pubsub-js";
-import { Input, Modal } from "antd";
+import { ColorPicker, Input, Modal } from "antd";
+
+import "./index.css";
 
 const Graph = (props) => {
   const nodes = useRef(new DataSet([])).current;
@@ -9,7 +11,9 @@ const Graph = (props) => {
   const network = useRef(null);
   const [openLabelEdit, setLabelEditOpen] = useState(false);
   const [newLabel, setNewLabel] = useState(null);
+  const [newColor, setNewColor] = useState(null);
   const [nodeId, setNodeId] = useState(null);
+  const [edgeId, setEdgeId] = useState(null);
 
   let options = {
     interaction: {
@@ -32,11 +36,6 @@ const Graph = (props) => {
         PubSub.publish("nodes-length", { len: nodes.length });
       },
       addEdge: (edge, callback) => {
-        edge = {
-          ...edge,
-          from: parseInt(edge.from),
-          to: parseInt(edge.to),
-        };
         callback(edge); //add
       },
       deleteNode: (data, callback) => {
@@ -103,6 +102,8 @@ const Graph = (props) => {
   }, []);
 
   const showEditDialog = (nodeId) => {
+    const nodeColor = nodes.get(nodeId).color;
+    setNewColor(nodeColor);
     setLabelEditOpen(true);
     setNodeId(nodeId);
   };
@@ -124,23 +125,38 @@ const Graph = (props) => {
     setNewLabel(null);
   };
 
+  const handleColorChange = (color) => {
+    setNewColor(color);
+  };
+
   return (
     <div
       id={"network"}
       className={"border-blue-100 border-2 h-5/6 bg-yellow-50 rounded-lg mx-4"}
     >
       <Modal
-        title={"Edit Node Label"}
-        className={"node-label-edit"}
+        title={"Edit Node"}
+        className={"node-edit-dialog"}
         open={openLabelEdit}
         onCancel={handleEditDialogCancel}
         onOk={handleEditDialogOk}
       >
         <Input
+          prefix={<p>Label</p>}
           onChange={handleLabelChange}
           placeholder={"Please enter your new label"}
           value={newLabel}
+          required
         />
+        <div className={"mt-1 space-x-4 ml-3"}>
+          <span className={"align-super"}>Color</span>
+          <ColorPicker
+            onChangeComplete={handleColorChange}
+            value={newColor}
+            showText={true}
+            format={"hex"}
+          />
+        </div>
       </Modal>
     </div>
   );
