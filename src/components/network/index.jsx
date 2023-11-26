@@ -199,10 +199,7 @@ const Graph = (props) => {
   };
 
   return (
-    <div
-      id={"network"}
-      className={"border-blue-100 border-2 h-5/6 bg-yellow-50 rounded-lg mx-4"}
-    >
+    <div id={"network"}>
       <Modal
         title={"Edit Node"}
         className={"node-edit-dialog"}

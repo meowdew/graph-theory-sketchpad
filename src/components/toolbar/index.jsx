@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PubSub from "pubsub-js";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { Input, Modal, Switch } from "antd";
+import { Input, Menu, Modal, Typography } from "antd";
+import { Content } from "antd/es/layout/layout";
 import "./index.css";
 
 const ToolBar = (props) => {
@@ -19,6 +19,9 @@ const ToolBar = (props) => {
       }
     };
   };
+  const menuItems = [
+    getMenuItem("1", "123", "", [getMenuItem("1-1", "Add Node", "", [])]),
+  ];
 
   const handleCancel = () => {
     setOpenEdgeDialog(false);
@@ -44,32 +47,44 @@ const ToolBar = (props) => {
     PubSub.publish("toggle-physics", { toggle: e });
   };
 
+  const settingItems = [
+    {
+      key: "1",
+      label: (
+        // <p className={""}>
+        //   <span className={""}>Auto Stabilization</span>
+        //   <Switch defaultChecked onChange={handleStabilizationToggle} />
+        // </p>
+        <button></button>
+      ),
+    },
+  ];
+
   return (
-    <div
-      className={
-        "toolbar my-4 space-x-4 flex justify-start border-b-2 border-blue-200 mx-4"
-      }
-    >
-      {options.map((op, index) => {
-        return (
-          <button
-            key={index}
-            className={"toolbar-btn"}
-            onClick={handleOptionClick(op)}
-          >
-            <AddRoundedIcon />
-            {op}
-          </button>
-        );
-      })}
-      <span
-        className={
-          "absolute right-8 space-x-2 align-super border-blue-200 rounded-xl bg-yellow-50 font-bold"
-        }
-      >
-        <span className={""}>Auto Stabilization</span>
-        <Switch defaultChecked onChange={handleStabilizationToggle} />
-      </span>
+    <div className={"toolbar space-y-4"}>
+      <Typography>
+        <div>H</div>
+        <Content>
+          <Menu items={menuItems}>
+            {/*{options.map((op, index) => {*/}
+            {/*  return (*/}
+            {/*    <Menu.Item key={index}>*/}
+            {/*      <button*/}
+            {/*        key={index}*/}
+            {/*        className={"toolbar-btn"}*/}
+            {/*        onClick={handleOptionClick(op)}*/}
+            {/*      >*/}
+            {/*        {op}*/}
+            {/*      </button>*/}
+            {/*    </Menu.Item>*/}
+            {/*  );*/}
+            {/*})}*/}
+            {/*<Menu.Item title={"Setting"} icon={<SettingTwoTone />}>*/}
+            {/*  <Menu.SubMenu children={<p>ceshi</p>}></Menu.SubMenu>*/}
+            {/*</Menu.Item>*/}
+          </Menu>
+        </Content>
+      </Typography>
       <div>
         <Modal
           className={"add-edge-dialog"}
@@ -105,6 +120,15 @@ const ToolBar = (props) => {
       </div>
     </div>
   );
+};
+
+const getMenuItem = (key, label, icon, children) => {
+  return {
+    key,
+    label,
+    icon,
+    children,
+  };
 };
 
 export default ToolBar;

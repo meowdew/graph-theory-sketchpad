@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PubSub from "pubsub-js";
+import "./index.css";
 
 const MsgBar = (props) => {
   const [nodesLength, setNodesLength] = useState(0);
@@ -28,8 +29,9 @@ const MsgBar = (props) => {
 
   return (
     <div
+      id={"msg-bar"}
       className={
-        "text-center my-4 space-x-8 italic font-mono font-bold text-2xl"
+        "text-center my-2 space-x-8 italic font-mono font-bold text-2xl"
       }
     >
       <span>{`|V| = ${nodesLength}`}</span>
