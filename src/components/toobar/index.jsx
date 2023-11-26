@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PubSub from "pubsub-js";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { Input, Modal } from "antd";
+import { Input, Modal, Switch } from "antd";
 import "./index.css";
 
 const ToolBar = (props) => {
@@ -13,7 +13,7 @@ const ToolBar = (props) => {
   const handleOptionClick = (op) => {
     return () => {
       if (op === "Add Node") {
-        PubSub.publish("activate-add-node", {});
+        PubSub.publish("add-node-ready", {});
       } else if (op === "Add Edge") {
         setOpenEdgeDialog(true);
       }
@@ -37,6 +37,10 @@ const ToolBar = (props) => {
     setEndIndex(e.target.value);
   };
 
+  const handleStabilizationToggle = (e) => {
+    PubSub.publish("toggle-physics", { toggle: e });
+  };
+
   return (
     <div
       className={
@@ -55,35 +59,47 @@ const ToolBar = (props) => {
           </button>
         );
       })}
-      <Modal
-        title={"Please enter edge details"}
-        open={openEdgeDialog}
-        onCancel={handleCancel}
-        onOk={handleConfirm}
+      <span
+        className={
+          "absolute right-8 space-x-2 align-super border-blue-200 rounded-xl bg-yellow-50 font-bold"
+        }
       >
-        <Input
-          prefix={<p>Start Node Id:</p>}
-          placeholder={"Please enter start node id"}
-          type={"number"}
-          defaultValue={0}
-          min={0}
-          max={10}
-          maxLength={99}
-          required={true}
-          onChange={handleStartIndexChange}
-        />
-        <Input
-          prefix={<p>End Node Id:</p>}
-          placeholder={"Please enter end node id"}
-          type={"number"}
-          defaultValue={0}
-          min={0}
-          max={10}
-          maxLength={99}
-          required={true}
-          onChange={handleEndIndexChange}
-        />
-      </Modal>
+        <span className={""}>Auto Stabilization</span>
+        <Switch defaultChecked onChange={handleStabilizationToggle} />
+      </span>
+      <div>
+        <Modal
+          className={"add-edge-dialog"}
+          title={"Add an Edge"}
+          open={openEdgeDialog}
+          onCancel={handleCancel}
+          onOk={handleConfirm}
+          centered
+        >
+          <Input
+            prefix={<p>Start Node Id:</p>}
+            placeholder={"Please enter start node id"}
+            type={"number"}
+            defaultValue={0}
+            min={0}
+            max={999}
+            maxLength={99}
+            required={true}
+            onChange={handleStartIndexChange}
+          />
+          <Input
+            prefix={<p>End Node Id:</p>}
+            placeholder={"Please enter end node id"}
+            type={"number"}
+            defaultValue={0}
+            min={0}
+            max={999}
+            maxLength={99}
+            required={true}
+            onChange={handleEndIndexChange}
+          />
+        </Modal>
+      </div>
     </div>
   );
 };

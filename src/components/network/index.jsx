@@ -21,50 +21,72 @@ const Graph = (props) => {
     },
     nodes: {
       shape: "circle",
+      margin: 20,
+      color: {
+        background: "white",
+        border: "black",
+      },
+      borderWidth: 2,
+      title: "Node",
     },
-    edges: {},
+    edges: {
+      color: {
+        color: "#0ee",
+        inherit: false,
+      },
+    },
     manipulation: {
       enabled: true,
       addNode: (node, callback) => {
         nodes.length === 0
-          ? (node = { id: 0, label: "0" })
+          ? (node = { id: 0, label: " 0 ", title: `Node id=0` })
           : (node = {
               id: nodes.getIds()[nodes.length - 1] + 1,
               label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
+              title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
             });
         callback(node); //add
         PubSub.publish("nodes-length", { len: nodes.length });
       },
       addEdge: (edge, callback) => {
         callback(edge); //add
+        PubSub.publish("edges-length", { len: edges.length });
       },
       deleteNode: (data, callback) => {
-        if (data.nodes.length > 0) {
-          data.nodes.forEach((nodeId) => {
-            nodes.remove({ id: nodeId });
-            data.edges.forEach((edge) => {
-              if (edge.from === nodeId || edge.to === nodeId) {
-                edges.remove({ id: edge.id });
-              }
-            });
-          });
-        }
+        console.log(data);
+        data?.nodes.forEach((nodeId) => {
+          nodes.remove({ id: nodeId });
+        });
+        data?.edge.forEach((edgeId) => {
+          edges.remove({ id: edgeId });
+        });
         PubSub.publish("nodes-length", { len: nodes.length });
+        PubSub.publish("edges-length", { len: edges.length });
       },
+      deleteEdge: (data, callback) => {
+        data.edges.forEach((edgeId) => {
+          edges.remove({ id: edgeId });
+        });
+        PubSub.publish("edges-length", { len: edges.length });
+      },
+    },
+    physics: {
+      enabled: true,
     },
   };
 
   useEffect(() => {
     const addNodeSubscription = PubSub.subscribe(
-      "activate-add-node",
+      "add-node-ready",
       (msg, data) => {
         if (data) {
           let newNode = {};
           nodes.length === 0
-            ? (newNode = { id: 0, label: "0" })
+            ? (newNode = { id: 0, label: " 0 ", title: `Node id=0` })
             : (newNode = {
                 id: nodes.getIds()[nodes.length - 1] + 1,
                 label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
+                title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
               });
           nodes.add(newNode);
           PubSub.publish("nodes-length", { len: nodes.length });
@@ -77,21 +99,35 @@ const Graph = (props) => {
       (msg, data) => {
         if (data) {
           edges.add(data);
+          PubSub.publish("edges-length", { len: edges.length });
         }
       },
     );
 
+    const setStabilizationSubscription = PubSub.subscribe(
+      "toggle-physics",
+      (msg, data) => {
+        if (data) {
+          network.current.setOptions({
+            physics: {
+              enabled: data?.toggle,
+            },
+          });
+        }
+      },
+    );
     return () => {
       PubSub.unsubscribe(addNodeSubscription);
       PubSub.unsubscribe(addEdgeSubscription);
+      PubSub.unsubscribe(setStabilizationSubscription);
     };
   }, []);
 
   useEffect(() => {
     const container = document.getElementById("network");
-    network.currnet = new Network(container, { nodes, edges }, { ...options });
+    network.current = new Network(container, { nodes, edges }, { ...options });
 
-    network.currnet.on("doubleClick", (params) => {
+    network.current.on("doubleClick", (params) => {
       //double click a node
       if (params.nodes.length > 0) {
         const nodeId = params.nodes[0];
@@ -102,8 +138,6 @@ const Graph = (props) => {
   }, []);
 
   const showEditDialog = (nodeId) => {
-    const nodeColor = nodes.get(nodeId).color;
-    setNewColor(nodeColor);
     setLabelEditOpen(true);
     setNodeId(nodeId);
   };
@@ -120,9 +154,18 @@ const Graph = (props) => {
 
   const handleEditDialogOk = () => {
     setLabelEditOpen(false);
-    nodes.update({ id: nodeId, label: newLabel });
+    if (newLabel !== null) {
+      if (newColor) {
+        nodes.update({
+          id: nodeId,
+          label: newLabel,
+          color: newColor.toHexString(),
+        });
+      } else nodes.update({ id: nodeId, label: newLabel });
+    } else alert("Please enter a label");
     setNodeId(null);
     setNewLabel(null);
+    setNewColor(null);
   };
 
   const handleColorChange = (color) => {
@@ -140,6 +183,7 @@ const Graph = (props) => {
         open={openLabelEdit}
         onCancel={handleEditDialogCancel}
         onOk={handleEditDialogOk}
+        centered
       >
         <Input
           prefix={<p>Label</p>}

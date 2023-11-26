@@ -18,3 +18,7 @@
     box-shadow: 2px -2px 2px wheat;
 }
 
+.add-edge-dialog .ant-btn-primary {
+    background-color: #3362FF;
+}
+
