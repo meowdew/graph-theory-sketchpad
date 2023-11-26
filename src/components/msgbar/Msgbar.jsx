@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PubSub from "pubsub-js";
-import "./index.css";
+import "./msgbar.css";
+import Matrix from "../toolbar/matrix/Matrix";
 
 const MsgBar = (props) => {
   const [nodesLength, setNodesLength] = useState(0);
@@ -30,12 +31,13 @@ const MsgBar = (props) => {
   return (
     <div
       id={"msg-bar"}
-      className={
-        "text-center my-2 space-x-8 italic font-mono font-bold text-2xl"
-      }
+      className={"text-center my-2 italic font-mono font-bold text-2xl"}
     >
-      <span>{`|V| = ${nodesLength}`}</span>
-      <span>{`|E| = ${edgesLength}`}</span>
+      <div className={"space-x-8"}>
+        <span>{`|V| = ${nodesLength}`}</span>
+        <span>{`|E| = ${edgesLength}`}</span>
+      </div>
+      <Matrix />
     </div>
   );
 };

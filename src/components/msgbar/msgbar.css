@@ -1,0 +1,12 @@
+#msg-bar {
+    border: 2px solid rebeccapurple;
+    margin-top: 2rem;
+    margin-right: 0.75rem;
+    width: 25vw;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 10px;
+    margin-bottom: 0;
+    min-height: max-content;
+}

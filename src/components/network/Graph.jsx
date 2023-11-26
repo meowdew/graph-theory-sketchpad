@@ -3,7 +3,7 @@ import { DataSet, Network } from "vis-network/standalone";
 import PubSub from "pubsub-js";
 import { ColorPicker, Input, Modal } from "antd";
 
-import "./index.css";
+import "./graph.css";
 
 const Graph = (props) => {
   const nodes = useRef(new DataSet([])).current;
@@ -31,6 +31,7 @@ const Graph = (props) => {
       adjList[edge.to].adj.push(edge.from);
     });
     setAdjList(adjList);
+    PubSub.publish("adj-list", { adjList });
   };
 
   let options = {
@@ -63,13 +64,14 @@ const Graph = (props) => {
               label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
               title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
             });
-        callback(node); //add
+        callback(node);
+        updateAdjList();
         PubSub.publish("nodes-length", { len: nodes.length });
       },
       addEdge: (edge, callback) => {
-        callback(edge); //add
-        PubSub.publish("edges-length", { len: edges.length });
+        callback(edge);
         updateAdjList();
+        PubSub.publish("edges-length", { len: edges.length });
       },
       deleteNode: (data, callback) => {
         console.log(data);
@@ -199,32 +201,34 @@ const Graph = (props) => {
   };
 
   return (
-    <div id={"network"}>
-      <Modal
-        title={"Edit Node"}
-        className={"node-edit-dialog"}
-        open={openLabelEdit}
-        onCancel={handleEditDialogCancel}
-        onOk={handleEditDialogOk}
-        centered
-      >
-        <Input
-          prefix={<p>Label</p>}
-          onChange={handleLabelChange}
-          placeholder={"Please enter your new label"}
-          value={newLabel}
-          required
-        />
-        <div className={"mt-1 space-x-4 ml-3"}>
-          <span className={"align-super"}>Color</span>
-          <ColorPicker
-            onChangeComplete={handleColorChange}
-            value={newColor}
-            showText={true}
-            format={"hex"}
+    <div>
+      <div id={"network"}>
+        <Modal
+          title={"Edit Node"}
+          className={"node-edit-dialog"}
+          open={openLabelEdit}
+          onCancel={handleEditDialogCancel}
+          onOk={handleEditDialogOk}
+          centered
+        >
+          <Input
+            prefix={<p>Label</p>}
+            onChange={handleLabelChange}
+            placeholder={"Please enter your new label"}
+            value={newLabel}
+            required
           />
-        </div>
-      </Modal>
+          <div className={"mt-1 space-x-4 ml-3"}>
+            <span className={"align-super"}>Color</span>
+            <ColorPicker
+              onChangeComplete={handleColorChange}
+              value={newColor}
+              showText={true}
+              format={"hex"}
+            />
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 };

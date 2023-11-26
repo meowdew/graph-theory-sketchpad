@@ -3,12 +3,12 @@
 }
 
 #network {
-    margin-top: 1rem;
+    margin-top: 2rem;
     margin-left: 10vw;
-    margin-right: 0;
+    margin-right: 30vw;
     display: block;
-    width: 90vw;
-    height: 85vh;
+    height: 100vh;
     background-color: #F5F5F5;
-    border: 1px solid black;
+    border: 2px solid black;
+    border-radius: 10px;
 }

@@ -1,0 +1,40 @@
+.toolbar {
+    display: block;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 8vw;
+    padding: 5rem 0;
+    border-radius: 10px;
+}
+
+.btn-collapse {
+    background-color: #3362FF;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.menu {
+    color: black;
+    background-color: #c8d6e5;
+    position: relative;
+    z-index: 2;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: max-content;
+    font-weight: 500;
+}
+
+
+.add-edge-dialog .ant-btn-primary {
+    background-color: #3362FF;
+}
+
+.ant-switch {
+    background-color: gray;
+}
