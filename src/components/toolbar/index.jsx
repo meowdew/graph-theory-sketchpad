@@ -6,7 +6,7 @@ import "./index.css";
 
 const ToolBar = (props) => {
   const options = ["Add Node", "Add Edge"];
-
+  const [collapsed, setCollapsed] = useState(false);
   const [openEdgeDialog, setOpenEdgeDialog] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(0);
@@ -25,7 +25,10 @@ const ToolBar = (props) => {
   };
 
   const handleConfirm = () => {
-    PubSub.publish("edge-add-ready", { from: startIndex, to: endIndex });
+    PubSub.publish("edge-add-ready", {
+      from: startIndex.toString(),
+      to: endIndex.toString(),
+    });
     setOpenEdgeDialog(false);
   };
 
@@ -44,7 +47,7 @@ const ToolBar = (props) => {
   return (
     <div
       className={
-        "toolbar my-4 space-x-4 flex justify-start mx-4 border-b-2 border-blue-200"
+        "toolbar my-4 space-x-4 flex justify-start border-b-2 border-blue-200 mx-4"
       }
     >
       {options.map((op, index) => {

@@ -14,6 +14,24 @@ const Graph = (props) => {
   const [newColor, setNewColor] = useState(null);
   const [nodeId, setNodeId] = useState(null);
   const [edgeId, setEdgeId] = useState(null);
+  const [adjList, setAdjList] = useState([]);
+
+  const updateAdjList = () => {
+    let adjList = [];
+    nodes.forEach((node) => {
+      adjList.push({
+        id: node.id,
+        label: node.label,
+        color: node.color ? node.color : "white",
+        adj: [],
+      });
+    });
+    edges.forEach((edge) => {
+      adjList[edge.from].adj.push(edge.to);
+      adjList[edge.to].adj.push(edge.from);
+    });
+    setAdjList(adjList);
+  };
 
   let options = {
     interaction: {
@@ -51,15 +69,17 @@ const Graph = (props) => {
       addEdge: (edge, callback) => {
         callback(edge); //add
         PubSub.publish("edges-length", { len: edges.length });
+        updateAdjList();
       },
       deleteNode: (data, callback) => {
         console.log(data);
         data?.nodes.forEach((nodeId) => {
           nodes.remove({ id: nodeId });
         });
-        data?.edge.forEach((edgeId) => {
+        data?.edges.forEach((edgeId) => {
           edges.remove({ id: edgeId });
         });
+        updateAdjList();
         PubSub.publish("nodes-length", { len: nodes.length });
         PubSub.publish("edges-length", { len: edges.length });
       },
@@ -67,6 +87,7 @@ const Graph = (props) => {
         data.edges.forEach((edgeId) => {
           edges.remove({ id: edgeId });
         });
+        updateAdjList();
         PubSub.publish("edges-length", { len: edges.length });
       },
     },
@@ -89,6 +110,7 @@ const Graph = (props) => {
                 title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
               });
           nodes.add(newNode);
+          updateAdjList();
           PubSub.publish("nodes-length", { len: nodes.length });
         }
       },
@@ -99,6 +121,7 @@ const Graph = (props) => {
       (msg, data) => {
         if (data) {
           edges.add(data);
+          updateAdjList();
           PubSub.publish("edges-length", { len: edges.length });
         }
       },
@@ -132,14 +155,16 @@ const Graph = (props) => {
       if (params.nodes.length > 0) {
         const nodeId = params.nodes[0];
         const currentNode = nodes.get(nodeId);
-        showEditDialog(nodeId);
+        showEditDialog(currentNode);
       }
     });
   }, []);
 
-  const showEditDialog = (nodeId) => {
+  const showEditDialog = (currentNode) => {
+    setNodeId(currentNode?.id);
+    setNewLabel(currentNode?.label);
+    setNewColor(currentNode?.color);
     setLabelEditOpen(true);
-    setNodeId(nodeId);
   };
 
   const handleLabelChange = (e) => {
@@ -147,14 +172,15 @@ const Graph = (props) => {
   };
 
   const handleEditDialogCancel = () => {
-    setNewLabel(null);
     setNodeId(null);
+    setNewLabel(null);
+    setNewColor(null);
     setLabelEditOpen(false);
   };
 
   const handleEditDialogOk = () => {
     setLabelEditOpen(false);
-    if (newLabel !== null) {
+    if (newLabel) {
       if (newColor) {
         nodes.update({
           id: nodeId,

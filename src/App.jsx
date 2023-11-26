@@ -1,5 +1,5 @@
 import React from "react";
-import ToolBar from "./components/toobar";
+import ToolBar from "./components/toolbar";
 import MsgBar from "./components/msgbar";
 import Graph from "./components/network";
 import "./App.css";
