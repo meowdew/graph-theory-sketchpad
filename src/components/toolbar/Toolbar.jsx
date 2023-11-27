@@ -12,7 +12,7 @@ import "./toolbar.css";
 
 const ToolBar = (props) => {
 
-  const { setAutoStabilization } = props;
+  const { setAutoStabilization, autoStabilization } = props;
 
   const [collapsed, setCollapsed] = useState(false);
   const [openEdgeDialog, setOpenEdgeDialog] = useState(false);
@@ -41,7 +41,7 @@ const ToolBar = (props) => {
   };
 
   const handleStabilizationToggle = (e) => {
-    setAutoStabilization(false);
+    setAutoStabilization(!autoStabilization);
   };
 
   function toggleCollapsed() {

@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div className={"h-screen w-screen flex flex-col font-sans bg-yellow-50"}>
-      <ToolBar setAutoStabilization={setAutoStabilization} />
+      <ToolBar setAutoStabilization={setAutoStabilization} autoStabilization={autoStabilization}/>
       <Graph nodes={nodes} edges={edges} adjList={adjList} setAdjList={setAdjList}  autoStabilization={autoStabilization}/>
       <MsgBar nodes={nodes} edge={edges} adjList={adjList} />
     </div>
