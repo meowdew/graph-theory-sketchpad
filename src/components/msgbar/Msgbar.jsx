@@ -14,7 +14,7 @@ const MsgBar = (props) => {
     //count edges
     let count = 0;
     adjList.forEach((node) => {
-      count += node.adj.length;
+      count += node?.adj?.length ? node.adj.length : 0;
     });
     setEdgesLength(count / 2);
   }, [adjList]);

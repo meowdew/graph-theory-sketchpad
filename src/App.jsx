@@ -9,11 +9,12 @@ function App() {
   const nodes = useRef(new DataSet([])).current;
   const edges = useRef(new DataSet([])).current;
   const [adjList, setAdjList] = useState([]);
+  const [autoStabilization, setAutoStabilization] = useState(true);
 
   return (
     <div className={"h-screen w-screen flex flex-col font-sans bg-yellow-50"}>
-      <ToolBar />
-      <Graph nodes={nodes} edges={edges} adjList={adjList} setAdjList={setAdjList} />
+      <ToolBar setAutoStabilization={setAutoStabilization} />
+      <Graph nodes={nodes} edges={edges} adjList={adjList} setAdjList={setAdjList}  autoStabilization={autoStabilization}/>
       <MsgBar nodes={nodes} edge={edges} adjList={adjList} />
     </div>
   );

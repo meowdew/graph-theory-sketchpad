@@ -11,6 +11,9 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import "./toolbar.css";
 
 const ToolBar = (props) => {
+
+  const { setAutoStabilization } = props;
+
   const [collapsed, setCollapsed] = useState(false);
   const [openEdgeDialog, setOpenEdgeDialog] = useState(false);
   const [openSettingDrawer, setOpenSettingDrawer] = useState(false);
@@ -38,7 +41,7 @@ const ToolBar = (props) => {
   };
 
   const handleStabilizationToggle = (e) => {
-    PubSub.publish("toggle-physics", { toggle: e });
+    setAutoStabilization(false);
   };
 
   function toggleCollapsed() {

@@ -7,7 +7,7 @@ import "./graph.css";
 
 const Graph = (props) => {
 
-  const { nodes, edges, setAdjList } = props;
+  const { nodes, edges, setAdjList, autoStabilization } = props;
 
   const network = useRef(null);
   const [openLabelEdit, setLabelEditOpen] = useState(false);
@@ -87,7 +87,7 @@ const Graph = (props) => {
       },
     },
     physics: {
-      enabled: true,
+      enabled: autoStabilization,
     },
   };
 
@@ -124,23 +124,9 @@ const Graph = (props) => {
         }
       },
     );
-
-    const setStabilizationSubscription = PubSub.subscribe(
-      "toggle-physics",
-      (msg, data) => {
-        if (data) {
-          network.current.setOptions({
-            physics: {
-              enabled: data?.toggle,
-            },
-          });
-        }
-      },
-    );
     return () => {
       PubSub.unsubscribe(addNodeSubscription);
       PubSub.unsubscribe(addEdgeSubscription);
-      PubSub.unsubscribe(setStabilizationSubscription);
     };
   });
 
