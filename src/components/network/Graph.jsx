@@ -1,20 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DataSet, Network } from "vis-network/standalone";
+import { Network } from "vis-network/standalone";
 import PubSub from "pubsub-js";
 import { ColorPicker, Input, Modal } from "antd";
 
 import "./graph.css";
 
 const Graph = (props) => {
-  const nodes = useRef(new DataSet([])).current;
-  const edges = useRef(new DataSet([])).current;
+
+  const { nodes, edges, setAdjList } = props;
+
   const network = useRef(null);
   const [openLabelEdit, setLabelEditOpen] = useState(false);
   const [newLabel, setNewLabel] = useState(null);
   const [newColor, setNewColor] = useState(null);
   const [nodeId, setNodeId] = useState(null);
-  const [edgeId, setEdgeId] = useState(null);
-  const [adjList, setAdjList] = useState([]);
+
 
   const updateAdjList = () => {
     let adjList = [];
@@ -31,7 +31,6 @@ const Graph = (props) => {
       adjList[edge.to].adj.push(edge.from);
     });
     setAdjList(adjList);
-    PubSub.publish("adj-list", { adjList });
   };
 
   let options = {
@@ -60,21 +59,18 @@ const Graph = (props) => {
         nodes.length === 0
           ? (node = { id: 0, label: " 0 ", title: `Node id=0` })
           : (node = {
-              id: nodes.getIds()[nodes.length - 1] + 1,
-              label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
-              title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
-            });
+            id: nodes.getIds()[nodes.length - 1] + 1,
+            label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
+            title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
+          });
         callback(node);
         updateAdjList();
-        PubSub.publish("nodes-length", { len: nodes.length });
       },
       addEdge: (edge, callback) => {
         callback(edge);
         updateAdjList();
-        PubSub.publish("edges-length", { len: edges.length });
       },
       deleteNode: (data, callback) => {
-        console.log(data);
         data?.nodes.forEach((nodeId) => {
           nodes.remove({ id: nodeId });
         });
@@ -82,15 +78,12 @@ const Graph = (props) => {
           edges.remove({ id: edgeId });
         });
         updateAdjList();
-        PubSub.publish("nodes-length", { len: nodes.length });
-        PubSub.publish("edges-length", { len: edges.length });
       },
       deleteEdge: (data, callback) => {
         data.edges.forEach((edgeId) => {
           edges.remove({ id: edgeId });
         });
         updateAdjList();
-        PubSub.publish("edges-length", { len: edges.length });
       },
     },
     physics: {
@@ -107,13 +100,12 @@ const Graph = (props) => {
           nodes.length === 0
             ? (newNode = { id: 0, label: " 0 ", title: `Node id=0` })
             : (newNode = {
-                id: nodes.getIds()[nodes.length - 1] + 1,
-                label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
-                title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
-              });
+              id: nodes.getIds()[nodes.length - 1] + 1,
+              label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
+              title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
+            });
           nodes.add(newNode);
           updateAdjList();
-          PubSub.publish("nodes-length", { len: nodes.length });
         }
       },
     );
@@ -122,9 +114,13 @@ const Graph = (props) => {
       "edge-add-ready",
       (msg, data) => {
         if (data) {
+          const { to, from } = data;
+          if (!nodes.get(parseInt(to)) || !nodes.get(parseInt(from))) {
+            alert("Node does not exist");
+            return;
+          }
           edges.add(data);
           updateAdjList();
-          PubSub.publish("edges-length", { len: edges.length });
         }
       },
     );
@@ -153,7 +149,6 @@ const Graph = (props) => {
     network.current = new Network(container, { nodes, edges }, { ...options });
 
     network.current.on("doubleClick", (params) => {
-      //double click a node
       if (params.nodes.length > 0) {
         const nodeId = params.nodes[0];
         const currentNode = nodes.get(nodeId);

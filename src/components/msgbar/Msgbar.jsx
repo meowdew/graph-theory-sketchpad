@@ -1,32 +1,23 @@
 import React, { useEffect, useState } from "react";
-import PubSub from "pubsub-js";
 import "./msgbar.css";
 import Matrix from "../toolbar/matrix/Matrix";
 
 const MsgBar = (props) => {
+
+  const { adjList } = props;
+
   const [nodesLength, setNodesLength] = useState(0);
   const [edgesLength, setEdgesLength] = useState(0);
 
   useEffect(() => {
-    const nodesLengthSubscription = PubSub.subscribe(
-      "nodes-length",
-      (msg, data) => {
-        setNodesLength(data?.len);
-      },
-    );
-
-    const edgesLengthSubscription = PubSub.subscribe(
-      "edges-length",
-      (msg, data) => {
-        setEdgesLength(data?.len);
-      },
-    );
-
-    return () => {
-      PubSub.unsubscribe(nodesLengthSubscription);
-      PubSub.unsubscribe(edgesLengthSubscription);
-    };
-  }, []);
+    setNodesLength(adjList.length);
+    //count edges
+    let count = 0;
+    adjList.forEach((node) => {
+      count += node.adj.length;
+    });
+    setEdgesLength(count / 2);
+  }, [adjList]);
 
   return (
     <div

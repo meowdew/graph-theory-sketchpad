@@ -77,7 +77,6 @@ const ToolBar = (props) => {
     getItem("Matrix", "Matrices", <DataArrayIcon />, [
       getItem("Adjacency", "Show Adjacency Matrix"),
       getItem("Incidence", "Show Incidence Matrix"),
-      getItem("DegreeSequence", "Show Degree Sequence"),
     ]),
     getItem("Algorithm", "Algorithm", <PolylineIcon />, [
       getItem("SpanningTree", "Find Spanning Tree"),
@@ -147,7 +146,7 @@ const ToolBar = (props) => {
           <p className={"flex justify-between"}>
             Auto Stabilization
             <Switch
-              defaultValue={true}
+              defaultChecked
               onChange={handleStabilizationToggle}
               className={"ml-2"}
             />
