@@ -160,7 +160,7 @@ const Graph = (props) => {
   const showEditDialog = (currentNode) => {
     setNodeId(currentNode?.id);
     setNewLabel(currentNode?.label);
-    setNewColor(currentNode?.color);
+    setNewColor(currentNode?.color ? currentNode?.color : '#ffffff');
     setLabelEditOpen(true);
   };
 
