@@ -142,7 +142,7 @@ const Graph = (props) => {
       PubSub.unsubscribe(addEdgeSubscription);
       PubSub.unsubscribe(setStabilizationSubscription);
     };
-  }, []);
+  });
 
   useEffect(() => {
     const container = document.getElementById("network");
@@ -155,7 +155,7 @@ const Graph = (props) => {
         showEditDialog(currentNode);
       }
     });
-  }, []);
+  });
 
   const showEditDialog = (currentNode) => {
     setNodeId(currentNode?.id);
