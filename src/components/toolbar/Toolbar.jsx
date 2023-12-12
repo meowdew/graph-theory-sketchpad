@@ -1,17 +1,23 @@
 import React, { useState } from "react";
 import PubSub from "pubsub-js";
-import { Button, Divider, Drawer, Input, Menu, Modal, Switch } from "antd";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Drawer,
+  Input,
+  Menu,
+  Modal,
+  Switch,
+} from "antd";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import OpenInFullOutlinedIcon from "@mui/icons-material/OpenInFullOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
-import DataArrayIcon from "@mui/icons-material/DataArray";
-import PolylineIcon from "@mui/icons-material/Polyline";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 
 import "./toolbar.css";
 
 const ToolBar = (props) => {
-
   const { setAutoStabilization, autoStabilization } = props;
 
   const [collapsed, setCollapsed] = useState(false);
@@ -19,17 +25,21 @@ const ToolBar = (props) => {
   const [openSettingDrawer, setOpenSettingDrawer] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(0);
+  const [isArc, setIsArc] = useState(false);
 
   const handleCancel = () => {
     setOpenEdgeDialog(false);
+    setIsArc(false);
   };
 
   const handleConfirm = () => {
     PubSub.publish("edge-add-ready", {
       from: startIndex.toString(),
       to: endIndex.toString(),
+      arrows: isArc ? "to" : "none",
     });
     setOpenEdgeDialog(false);
+    setIsArc(false);
   };
 
   const handleStartIndexChange = (e) => {
@@ -77,15 +87,15 @@ const ToolBar = (props) => {
     getItem("Edge", "Edge", <OpenInFullOutlinedIcon />, [
       getItem("AddEdge", "Add Edge"),
     ]),
-    getItem("Matrix", "Matrices", <DataArrayIcon />, [
-      getItem("Adjacency", "Show Adjacency Matrix"),
-      getItem("Incidence", "Show Incidence Matrix"),
-    ]),
-    getItem("Algorithm", "Algorithm", <PolylineIcon />, [
-      getItem("SpanningTree", "Find Spanning Tree"),
-    ]),
+    // getItem("Algorithm", "Algorithm", <PolylineIcon />, [
+    //   getItem("SpanningTree", "Find Spanning Tree"),
+    // ]),
     getItem("Settings", "Settings", <SettingsIcon />, null),
   ];
+
+  function handleChecked(e) {
+    setIsArc(e.target.checked);
+  }
 
   return (
     <div className={"toolbar space-y-4"}>
@@ -137,6 +147,9 @@ const ToolBar = (props) => {
             required={true}
             onChange={handleEndIndexChange}
           />
+          <Checkbox onChange={handleChecked} checked={isArc}>
+            This is an arc
+          </Checkbox>
         </Modal>
         <Drawer
           className={"font-sans"}

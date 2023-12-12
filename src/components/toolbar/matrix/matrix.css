@@ -1,3 +1,30 @@
 .matrix {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    margin: 20px 10px;
+    overflow: scroll;
+}
+
+
+.matrix-type {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    width: 50px;
+    flex-shrink: 0;
+}
+
+.matrix-type::after {
+    content: '';
     display: block;
+    clear: both;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    background-color: black;
+    width: 2px;
+    transform: translateX(10px);
 }

@@ -6,7 +6,6 @@ import { ColorPicker, Input, Modal } from "antd";
 import "./graph.css";
 
 const Graph = (props) => {
-
   const { nodes, edges, setAdjList, autoStabilization } = props;
 
   const network = useRef(null);
@@ -14,7 +13,6 @@ const Graph = (props) => {
   const [newLabel, setNewLabel] = useState(null);
   const [newColor, setNewColor] = useState(null);
   const [nodeId, setNodeId] = useState(null);
-
 
   const updateAdjList = () => {
     let adjList = [];
@@ -59,10 +57,10 @@ const Graph = (props) => {
         nodes.length === 0
           ? (node = { id: 0, label: " 0 ", title: `Node id=0` })
           : (node = {
-            id: nodes.getIds()[nodes.length - 1] + 1,
-            label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
-            title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
-          });
+              id: nodes.getIds()[nodes.length - 1] + 1,
+              label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
+              title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
+            });
         callback(node);
         updateAdjList();
       },
@@ -100,10 +98,10 @@ const Graph = (props) => {
           nodes.length === 0
             ? (newNode = { id: 0, label: " 0 ", title: `Node id=0` })
             : (newNode = {
-              id: nodes.getIds()[nodes.length - 1] + 1,
-              label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
-              title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
-            });
+                id: nodes.getIds()[nodes.length - 1] + 1,
+                label: ` ${nodes.getIds()[nodes.length - 1] + 1} `,
+                title: `Node id=${nodes.get()[nodes.length - 1]?.id + 1}`,
+              });
           nodes.add(newNode);
           updateAdjList();
         }
@@ -146,7 +144,7 @@ const Graph = (props) => {
   const showEditDialog = (currentNode) => {
     setNodeId(currentNode?.id);
     setNewLabel(currentNode?.label);
-    setNewColor(currentNode?.color ? currentNode?.color : '#ffffff');
+    setNewColor(currentNode?.color ? currentNode?.color : "#ffffff");
     setLabelEditOpen(true);
   };
 
